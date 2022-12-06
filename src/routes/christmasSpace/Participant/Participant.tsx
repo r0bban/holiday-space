@@ -45,8 +45,6 @@ function Participant() {
         descArray = game.desc.split("\n")
     }
 
-    console.log(game)
-
     if (game) {
         return (
             <div className={styles.main}>
