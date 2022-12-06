@@ -1,7 +1,10 @@
 import React from "react";
 import logo from '../../logo.svg';
+import {useParams} from "react-router-dom";
 
 function Home() {
+
+    let { jane } = useParams();
     return (
         <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />
@@ -14,7 +17,7 @@ function Home() {
         target="_blank"
         rel="noopener noreferrer"
       >
-        Learn React
+        Learn React{jane}
       </a>
     </header>
     )
