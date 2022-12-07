@@ -1,9 +1,10 @@
 import React from 'react';
-import logo from '../../logo.svg';
 import { useParams } from 'react-router-dom';
 
+import logo from '../../logo.svg';
+
 function Home() {
-  let { jane } = useParams();
+  const { jane } = useParams();
   return (
     <header className="App-header">
       <img src={logo} className="App-logo" alt="logo" />

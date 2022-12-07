@@ -2,9 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary, Button, Typography } from '@mui/material';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  ButtonGroup,
+  Typography
+} from '@mui/material';
 
 import { GameResponse } from '../../../api/types/games';
+import AlertModal from '../../../components/AlertModal/AlertModal';
+import gift from '../assets/gift.png';
+import ham from '../assets/ham.png';
 import styles from './Participant.module.css';
 
 function Participant() {
@@ -44,11 +54,39 @@ function Participant() {
     descArray = game.desc.split('\n');
   }
 
+  const [alertOpen, setAlertOpen] = React.useState(false);
+
+  const handleClickFood = () => {
+    setAlertOpen(true);
+  };
+
+  const handleCloseAlert = () => {
+    setAlertOpen(false);
+  };
+
   if (game) {
     return (
       <div className={styles.main}>
         <h1 className={styles.header}>{game.title}</h1>
         <div className={styles.wrapper}>
+          <nav>
+            <ButtonGroup
+              className={styles.navBtnGrp}
+              fullWidth
+              disableElevation
+              variant="outlined"
+              aria-label="Disabled elevation buttons"
+            >
+              <Button className={styles.navBtn} variant="contained">
+                <img src={gift} height="16px" />
+                Klappsbyte
+              </Button>
+              <Button className={styles.navBtn} onClick={handleClickFood}>
+                <img src={ham} height="18px" />
+                Knytkalas
+              </Button>
+            </ButtonGroup>
+          </nav>
           <div className={styles.dataContainer}>
             {game.me && (
               <p className={styles.dataText}>
@@ -135,6 +173,14 @@ function Participant() {
             {showRecipient ? 'Dölj mottagare' : 'Visa mottagare'}
           </Button>
         </div>
+        <AlertModal
+          onClose={handleCloseAlert}
+          open={alertOpen}
+          title={'Nyheter på väg'}
+          message={
+            'Här kommer vi tillsammans planera maten. Planerad lansering Lördag 19 december.'
+          }
+        />
       </div>
     );
   }

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import './App.css';
-import Home from './routes/Home';
+
 import ChristmasHome from './routes/christmasSpace/ChristmasHome';
 import Participant from './routes/christmasSpace/Participant';
+import Home from './routes/Home';
+
+import './App.css';
 
 function App() {
   return (
