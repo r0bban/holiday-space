@@ -10,8 +10,8 @@ import './index.css';
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
   <React.StrictMode>
-    {/*  change basename to repo-name before build for gh-pages*/}
-    <BrowserRouter basename={'/'}>
+    {/*  change basename to repo-name ('holiday-space) before build for gh-pages*/}
+    <BrowserRouter basename={'holiday-space'}>
       <App />
     </BrowserRouter>
   </React.StrictMode>
