@@ -96,7 +96,7 @@ function Participant() {
             )}
             <p className={styles.dataText}>
               Pris:
-              <span className={styles.dataText}> 250 kr</span>
+              <span className={styles.dataText}> 300 kr</span>
             </p>
           </div>
           {descArray && (
