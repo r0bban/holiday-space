@@ -1,4 +1,4 @@
-import React, {FC, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Button, FormControlLabel, Switch,
@@ -26,6 +26,25 @@ function ChristmasHome() {
 
   const handleCloseAlert = () => {
     setAlertOpen(false);
+  };
+
+  const handleSharing = async () => {
+    if (navigator.share) {
+      try {
+        await navigator
+            .share({title: "testShare", url: "google.com", text: "Hej, välkkommen till julklappsspelet. Bromsvägen 2023" })
+            .then(() =>
+                console.log("Hooray! Your content was shared to tha world")
+            );
+      } catch (error) {
+        console.log(`Oops! I couldn't share to the world because: ${error}`);
+      }
+    } else {
+      // fallback code
+      console.log(
+          "Web share is currently not supported on this browser. Please provide a callback"
+      );
+    }
   };
 
   const {
@@ -62,6 +81,7 @@ function ChristmasHome() {
 
   const getGame = useCallback((pass: string) => {
     fetch(`https://christmas-space-s7sdcyjejq-lz.a.run.app/games/${gameId}`, {
+    //fetch(`http://localhost:8080/games/${gameId}`, {
       headers: {
         Authorization: `AdminToken ${pass}`
       }
@@ -123,6 +143,7 @@ function ChristmasHome() {
             </Button>
           </form>
         )}
+        <Button onClick={()=> handleSharing()}>Dela mig!</Button>
       </div>
       <AlertModal onClose={handleCloseAlert} open={alertOpen} title={'Login'}>
         <form onSubmit={handleSubmitLogin(onLogIn)}>
