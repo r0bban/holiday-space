@@ -28,6 +28,7 @@ function Participant() {
 
   useEffect(() => {
     fetch(`https://christmas-space-s7sdcyjejq-lz.a.run.app/games/${gameId}/${participantId}`).then(
+    //fetch(`http://localhost:8080/games/${gameId}/${participantId}`).then(
       (response) => {
         setLoading(false);
         if (!response.ok) {
