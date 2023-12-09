@@ -6,10 +6,14 @@ import Participant from './routes/christmasSpace/Participant';
 import Home from './routes/Home';
 
 import './App.css';
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import 'dayjs/locale/se';
 
 function App() {
   return (
-    <div className="App">
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale={"se"}>
+      <div className="App">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="christmas/game">
@@ -18,6 +22,7 @@ function App() {
         </Route>
       </Routes>
     </div>
+      </LocalizationProvider>
   );
 }
 

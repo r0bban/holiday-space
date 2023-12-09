@@ -17,14 +17,11 @@
   },
   "plugins": ["react", "@typescript-eslint", "simple-import-sort"],
   "rules": {
-    "simple-import-sort/imports": ["error", {
-      "groups": [
-        ["^react"],
-        ["^antd"],
-        ["^@?\\w"],
-        ["@/(.*)"],
-        ["^[./]"]
-      ]
-    }]
+    "simple-import-sort/imports": [
+      "error",
+      {
+        "groups": [["^react"], ["^antd"], ["^@?\\w"], ["@/(.*)"], ["^[./]"]]
+      }
+    ]
   }
 }

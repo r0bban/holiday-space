@@ -96,7 +96,7 @@ function Participant() {
             )}
             <p className={styles.dataText}>
               Pris:
-              <span className={styles.dataText}> 300 kr</span>
+              <span className={styles.dataText}> 350 kr</span>
             </p>
           </div>
           {descArray && (
@@ -180,6 +180,7 @@ function Participant() {
           message={
             'Här kommer vi tillsammans planera maten. Planerad lansering Lördag 19 december.'
           }
+          confirmLabel={'Ok'}
         />
       </div>
     );

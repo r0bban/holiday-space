@@ -12,11 +12,20 @@ import {
 type AlertModalProps = {
   open: boolean;
   onClose: () => void;
-  title: string;
-  message: string;
+  confirmLabel?: string;
+  title?: string;
+  message?: string;
+  children?: React.ReactNode;
 };
 
-const AlertModal: FC<AlertModalProps> = ({ open, onClose, message, title }) => {
+const AlertModal: FC<AlertModalProps> = ({
+  open,
+  onClose,
+  confirmLabel,
+  message,
+  title,
+  children
+}) => {
   return (
     <Dialog
       open={open}
@@ -24,14 +33,22 @@ const AlertModal: FC<AlertModalProps> = ({ open, onClose, message, title }) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      {title && <DialogTitle id="alert-dialog-title">{title}</DialogTitle>}
+
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">{message}</DialogContentText>
+        <>
+          {message && (
+            <DialogContentText id="alert-dialog-description">{message}</DialogContentText>
+          )}
+          {children}
+        </>
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} autoFocus>
-          Ok
-        </Button>
+        {confirmLabel && (
+          <Button onClick={onClose} autoFocus>
+            {confirmLabel}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
