@@ -1,9 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Button, FormControlLabel, Switch, TextField } from '@mui/material';
+import { Box, Button, FormControlLabel, Switch, TextField, Typography } from '@mui/material';
+import SendIcon from '@mui/icons-material/Send';
 
 import styles from './ChristmasHome.module.css';
-import { GameResponse } from '../../../api/types/games';
+import { GameResponse, ParticipantResponse } from '../../../api/types/games';
 import AlertModal from '../../../components/AlertModal/AlertModal';
 import { FieldValues, SubmitHandler, useForm } from 'react-hook-form';
 import { MobileDateTimePicker } from '@mui/x-date-pickers';
@@ -24,14 +25,18 @@ function ChristmasHome() {
     setAlertOpen(false);
   };
 
-  const handleSharing = async () => {
+  const gameTitle = useMemo(() => {
+    return game ? game.title : '';
+  }, []);
+
+  const handleSharing = async (participant: ParticipantResponse) => {
     if (navigator.share) {
       try {
         await navigator
           .share({
-            title: 'testShare',
-            url: 'google.com',
-            text: 'Hej, välkkommen till julklappsspelet. Bromsvägen 2023'
+            title: 'Julklappsspelet 2023',
+            url: `https://r0bban.github.io/holiday-space/christmas/game/${gameId}/${participant.id}`,
+            text: `Hej, välkkommen till julklappsspelet: ${gameTitle}`
           })
           .then(() => console.log('Hooray! Your content was shared to tha world'));
       } catch (error) {
@@ -79,7 +84,7 @@ function ChristmasHome() {
 
   const getGame = useCallback((pass: string) => {
     fetch(`https://christmas-space-s7sdcyjejq-lz.a.run.app/games/${gameId}`, {
-    //fetch(`http://localhost:8080/games/${gameId}`, {
+      //fetch(`http://localhost:8080/games/${gameId}`, {
       headers: {
         Authorization: `AdminToken ${pass}`
       }
@@ -109,60 +114,75 @@ function ChristmasHome() {
     <div className={styles.main}>
       <h1 className={styles.header}>This is home for game: {gameId}</h1>
       <div className={styles.wrapper}>
-        {!game ? (
+        {!game && (
           <Button variant="contained" onClick={() => handleClickImAdmin()}>
             I am admin
           </Button>
-        ) : (
-          <form onSubmit={() => alert('update')}>
-            <TextField
-              sx={lightFieldStyle}
-              margin="normal"
-              label="Game title"
-              variant="filled"
-              fullWidth
-              {...register('title')}
-            />
-            <TextField
-              sx={lightFieldStyle}
-              margin="normal"
-              label="Game Description"
-              variant="filled"
-              fullWidth
-              {...register('desc')}
-            />
-            <MobileDateTimePicker
-              sx={lightFieldStyle}
-              defaultValue={dayjs(getGameData('autoOpen'))}
-            />
-            <FormControlLabel
-              labelPlacement="start"
-              control={<Switch defaultChecked={game.isOpen} />}
-              label="Game is open?"
-              {...register('isOpen')}
-            />
-            <MobileDateTimePicker
-              sx={lightFieldStyle}
-              defaultValue={dayjs(getGameData('lastRecipientTips'))}
-            />
-            <FormControlLabel
-              labelPlacement="start"
-              control={<Switch defaultChecked={game.declareForAll} />}
-              label="Declare for all?"
-              {...register('declareForAll')}
-            />
-            <FormControlLabel
-              labelPlacement="start"
-              control={<Switch defaultChecked={game.declareMyGiver} />}
-              label="Declare giver?"
-              {...register('declareMyGiver')}
-            />
-            <Button type="submit" variant="outlined" fullWidth>
-              Update
-            </Button>
-          </form>
         )}
-        <Button onClick={() => handleSharing()}>Dela mig!</Button>
+        {game && (
+          <>
+            <form onSubmit={() => alert('update')}>
+              <TextField
+                sx={lightFieldStyle}
+                margin="normal"
+                label="Game title"
+                variant="filled"
+                fullWidth
+                {...register('title')}
+              />
+              <TextField
+                sx={lightFieldStyle}
+                margin="normal"
+                label="Game Description"
+                variant="filled"
+                fullWidth
+                {...register('desc')}
+              />
+              <MobileDateTimePicker
+                sx={lightFieldStyle}
+                defaultValue={dayjs(getGameData('autoOpen'))}
+              />
+              <FormControlLabel
+                labelPlacement="start"
+                control={<Switch defaultChecked={game.isOpen} />}
+                label="Game is open?"
+                {...register('isOpen')}
+              />
+              <MobileDateTimePicker
+                sx={lightFieldStyle}
+                defaultValue={dayjs(getGameData('lastRecipientTips'))}
+              />
+              <FormControlLabel
+                labelPlacement="start"
+                control={<Switch defaultChecked={game.declareForAll} />}
+                label="Declare for all?"
+                {...register('declareForAll')}
+              />
+              <FormControlLabel
+                labelPlacement="start"
+                control={<Switch defaultChecked={game.declareMyGiver} />}
+                label="Declare giver?"
+                {...register('declareMyGiver')}
+              />
+              <Button type="submit" variant="outlined" fullWidth>
+                Update
+              </Button>
+            </form>
+            {game.participants.map((p, k) => (
+              <Box>
+                <Button
+                  sx={{ margin: '10px 0' }}
+                  fullWidth
+                  onClick={() => handleSharing(p)}
+                  variant="contained"
+                  endIcon={<SendIcon />}
+                >
+                  {p.name}
+                </Button>
+              </Box>
+            ))}
+          </>
+        )}
       </div>
       <AlertModal onClose={handleCloseAlert} open={alertOpen} title={'Login'}>
         <form onSubmit={handleSubmitLogin(onLogIn)}>

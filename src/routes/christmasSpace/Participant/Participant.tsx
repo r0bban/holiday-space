@@ -44,7 +44,7 @@ function Participant() {
 
   useEffect(() => {
     fetch(`https://christmas-space-s7sdcyjejq-lz.a.run.app/games/${gameId}/${participantId}`).then(
-    //fetch(`http://localhost:8080/games/${gameId}/${participantId}`).then(
+      //fetch(`http://localhost:8080/games/${gameId}/${participantId}`).then(
       (response) => {
         setLoading(false);
         if (!response.ok) {
@@ -71,7 +71,7 @@ function Participant() {
     (tips: string | undefined) => {
       console.log(game);
       fetch(`https://christmas-space-s7sdcyjejq-lz.a.run.app/games/${gameId}/${participantId}`, {
-      //fetch(`http://localhost:8080/games/${gameId}/${participantId}`, {
+        //fetch(`http://localhost:8080/games/${gameId}/${participantId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -280,7 +280,14 @@ function Participant() {
                 id="panel1a-header"
               >
                 <Typography>Jag vill tipsa</Typography>
-                {latestTipsStr && <Chip sx={{marginLeft:"3px"}} size={"small"} color={'error'} label={"senast " + latestTipsStr} />}
+                {latestTipsStr && (
+                  <Chip
+                    sx={{ marginLeft: '3px' }}
+                    size={'small'}
+                    color={'error'}
+                    label={'senast ' + latestTipsStr}
+                  />
+                )}
               </AccordionSummary>
               <AccordionDetails>
                 <Typography textAlign={'left'}>
