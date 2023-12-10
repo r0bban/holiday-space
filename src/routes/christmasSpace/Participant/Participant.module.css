@@ -83,3 +83,8 @@ p.descItem {
   font-size: 30px;
   font-weight: bold;
 }
+
+.fullWidthBtn {
+  width: 100%;
+  max-width: 100%;
+}

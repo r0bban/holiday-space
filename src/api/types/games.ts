@@ -26,5 +26,7 @@ export type ParticipantResponse = {
   name: string;
   game: string;
   givingTo?: string;
+  givingToTips?: string;
   receivingFrom?: string;
+  tips?: string;
 };
