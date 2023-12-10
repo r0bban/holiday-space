@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "c658d2bdf54773b1d909",
+    "revision": "1938e22c03ddf4dca386",
     "url": "/holiday-space/static/css/main.37d7a8d3.chunk.css"
   },
   {
-    "revision": "c658d2bdf54773b1d909",
-    "url": "/holiday-space/static/js/main.47f81716.chunk.js"
+    "revision": "1938e22c03ddf4dca386",
+    "url": "/holiday-space/static/js/main.4af44657.chunk.js"
   },
   {
     "revision": "3f8c5408934b7ef65096",
@@ -28,7 +28,7 @@ self.__precacheManifest = [
     "url": "/holiday-space/static/media/logo.06e73328.svg"
   },
   {
-    "revision": "6c50c4429ff368ed06c629375fd14dd8",
+    "revision": "ecdf8531c9455267915b6a3e7bd9fcf9",
     "url": "/holiday-space/index.html"
   }
 ];
