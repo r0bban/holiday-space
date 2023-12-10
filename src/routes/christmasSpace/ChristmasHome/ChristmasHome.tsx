@@ -27,7 +27,7 @@ function ChristmasHome() {
 
   const gameTitle = useMemo(() => {
     return game ? game.title : '';
-  }, []);
+  }, [game]);
 
   const handleSharing = async (participant: ParticipantResponse) => {
     if (navigator.share) {
