@@ -107,14 +107,24 @@ function Participant() {
     startDate = new Date(Date.parse(game.autoOpen));
   }
 
-  const latestTipsStr = useMemo(() => {
-    if (game && game.lastRecipientTips) {
-      const latestDate = new Date(Date.parse(game.lastRecipientTips));
-      return `${latestDate.getDate()}:e kl ${latestDate.getHours()}:${
-        latestDate.getMinutes() < 10 ? '0' : ''
-      }${latestDate.getMinutes()}`;
-    }
-  }, [game]);
+  const latestTipsStr = useCallback(
+    (weekday?: boolean) => {
+      if (game && game.lastRecipientTips) {
+        const latestDate = new Date(Date.parse(game.lastRecipientTips));
+        return `${
+          weekday
+            ? `${latestDate.toLocaleString('sv-SE', {
+                weekday: 'long'
+              })} den`
+            : ''
+        }${latestDate.getDate()}:e kl ${latestDate.getHours()}:${
+          latestDate.getMinutes() < 10 ? '0' : ''
+        }${latestDate.getMinutes()}`;
+      }
+      return undefined;
+    },
+    [game]
+  );
 
   let descArray: string[] | undefined;
   if (game && game.desc) {
@@ -137,6 +147,7 @@ function Participant() {
   };
 
   const [alertOpen, setAlertOpen] = React.useState(false);
+  const [newAlertOpen, setNewsAlertOpen] = React.useState(true);
 
   const handleClickFood = () => {
     setAlertOpen(true);
@@ -144,6 +155,9 @@ function Participant() {
 
   const handleCloseAlert = () => {
     setAlertOpen(false);
+  };
+  const handleCloseNewsAlert = () => {
+    setNewsAlertOpen(false);
   };
 
   const giftIconsLabel = useCallback(
@@ -280,12 +294,12 @@ function Participant() {
                 id="panel1a-header"
               >
                 <Typography>Jag vill tipsa</Typography>
-                {latestTipsStr && (
+                {latestTipsStr(false) && (
                   <Chip
                     sx={{ marginLeft: '3px' }}
                     size={'small'}
                     color={'error'}
-                    label={'senast ' + latestTipsStr}
+                    label={'senast ' + latestTipsStr()}
                   />
                 )}
               </AccordionSummary>
@@ -400,6 +414,46 @@ function Participant() {
           }
           confirmLabel={'Ok'}
         />
+        <AlertModal
+          onClose={handleCloseNewsAlert}
+          open={newAlertOpen}
+          title={'Nyheter är här!'}
+          confirmLabel={'Ok'}
+        >
+          {game && game.lastRecipientTips && (
+            <Typography color={theme.palette.text.primary}>
+              Du rekommenderas att{' '}
+              <Typography
+                display={'inline'}
+                color={theme.palette.text.primary}
+                sx={{ textDecoration: 'underline' }}
+              >
+                inte köpa din julklapp
+              </Typography>{' '}
+              förrän efter{' '}
+              <Typography
+                display={'inline'}
+                color={theme.palette.text.primary}
+                sx={{ fontWeight: 'bold' }}
+              >
+                {latestTipsStr(true)}
+              </Typography>{' '}
+              eftersom din mottagare fram till dess kan lämna tips på vilken typ av klapp den
+              önskar.
+              <Typography variant={'h6'} mt={2} color={theme.palette.text.primary}>
+                Ge ditt egna tips (frivilligt)
+              </Typography>
+              <Typography mt={1} color={theme.palette.text.primary}>
+                Du kan kan själv ge tips på vad du önskar så syns det för din givare när denne går
+                in här på sidan. Kom bara ihåg att lämna ditt tips innan {latestTipsStr(true)}.
+              </Typography>
+              <Typography mt={1} color={theme.palette.text.primary}>
+                Klicka på "Jag vill tipsa", välja ditt tips, och klicka sedan på "Spara" för att
+                lämna ditt tips.
+              </Typography>
+            </Typography>
+          )}
+        </AlertModal>
       </div>
     );
   }

@@ -30,19 +30,19 @@ function ChristmasHome() {
     if (navigator.share) {
       try {
         await navigator
-            .share({
-              title: 'Julklappsspelet 2023',
-              url: `https://r0bban.github.io/holiday-space/christmas/game/${gameId}/${participant.id}`,
-              text: `Hej ${participant.name}, hjärtligt välkommen till julklappsspelet: ${gameTitle}`
-            })
-            .then(() => console.log('Hooray! Your content was shared to tha world'));
+          .share({
+            title: 'Julklappsspelet 2023',
+            url: `https://r0bban.github.io/holiday-space/christmas/game/${gameId}/${participant.id}`,
+            text: `Hej ${participant.name}, hjärtligt välkommen till julklappsspelet: ${gameTitle}`
+          })
+          .then(() => console.log('Hooray! Your content was shared to tha world'));
       } catch (error) {
         console.log(`Oops! I couldn't share to the world because: ${error}`);
       }
     } else {
       // fallback code
       console.log(
-          'Web share is currently not supported on this browser. Please provide a callback'
+        'Web share is currently not supported on this browser. Please provide a callback'
       );
     }
   };
@@ -96,9 +96,9 @@ function ChristmasHome() {
 
         response.json().then((data) => {
           setGame(data as GameResponse);
-          const title = (data as GameResponse).title
+          const title = (data as GameResponse).title;
           if (title) {
-            setGameTitle(title)
+            setGameTitle(title);
           }
           resetGameForm(data);
           sessionStorage.setItem('adminKey', pass);
