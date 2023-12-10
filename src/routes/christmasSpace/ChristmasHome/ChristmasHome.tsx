@@ -1,6 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Box, Button, FormControlLabel, Switch, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControlLabel, Switch, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 
 import styles from './ChristmasHome.module.css';
@@ -14,6 +14,7 @@ function ChristmasHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
   const [game, setGame] = useState<GameResponse>();
+  const [gameTitle, setGameTitle] = useState<string>();
   const { gameId } = useParams();
   const [alertOpen, setAlertOpen] = React.useState(false);
 
@@ -25,27 +26,23 @@ function ChristmasHome() {
     setAlertOpen(false);
   };
 
-  const gameTitle = useMemo(() => {
-    return game ? game.title : '';
-  }, [game]);
-
   const handleSharing = async (participant: ParticipantResponse) => {
     if (navigator.share) {
       try {
         await navigator
-          .share({
-            title: 'Julklappsspelet 2023',
-            url: `https://r0bban.github.io/holiday-space/christmas/game/${gameId}/${participant.id}`,
-            text: `Hej, välkkommen till julklappsspelet: ${gameTitle}`
-          })
-          .then(() => console.log('Hooray! Your content was shared to tha world'));
+            .share({
+              title: 'Julklappsspelet 2023',
+              url: `https://r0bban.github.io/holiday-space/christmas/game/${gameId}/${participant.id}`,
+              text: `Hej ${participant.name}, hjärtligt välkommen till julklappsspelet: ${gameTitle}`
+            })
+            .then(() => console.log('Hooray! Your content was shared to tha world'));
       } catch (error) {
         console.log(`Oops! I couldn't share to the world because: ${error}`);
       }
     } else {
       // fallback code
       console.log(
-        'Web share is currently not supported on this browser. Please provide a callback'
+          'Web share is currently not supported on this browser. Please provide a callback'
       );
     }
   };
@@ -99,6 +96,10 @@ function ChristmasHome() {
 
         response.json().then((data) => {
           setGame(data as GameResponse);
+          const title = (data as GameResponse).title
+          if (title) {
+            setGameTitle(title)
+          }
           resetGameForm(data);
           sessionStorage.setItem('adminKey', pass);
         });
