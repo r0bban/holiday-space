@@ -5,6 +5,7 @@ export type GameResponse = {
   autoOpen?: string;
   isOpen: boolean;
   lastRecipientTips?: string;
+  openForTips: boolean;
   me?: ParticipantResponse;
   declareForAll: boolean;
   declareMyGiver: boolean;

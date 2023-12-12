@@ -38,6 +38,7 @@ function Participant() {
   const { participantId } = useParams();
   const { gameId } = useParams();
   const [newGiftTips, setNewGiftTips] = React.useState<string | undefined>(undefined);
+  const [openForTips, setOpenForTips] = React.useState<boolean>(false);
   const [persistedGiftTips, setPersistedGiftTips] = React.useState<string | undefined>(undefined);
 
   const [showRecipient, setShowRecipient] = useState(false);
@@ -133,6 +134,7 @@ function Participant() {
 
   useEffect(() => {
     if (game && game.me) setNewGiftTips(game.me.tips);
+    if (game) setOpenForTips(game.openForTips)
   }, [game]);
 
   const giftChanged = useMemo(() => {
@@ -202,6 +204,7 @@ function Participant() {
           aria-label="soft"
           color={tipsStr == newGiftTips ? 'success' : 'info'}
           size={'small'}
+          disabled={!openForTips && tipsStr != newGiftTips}
         >
           <Box sx={{ display: 'flex', width: '100%' }} justifyContent="flex-end" height="10px">
             {tipsStr == newGiftTips && <CheckCircleFilledIcon fontSize={'small'} />}
@@ -296,16 +299,15 @@ function Participant() {
                 <Typography>Jag vill tipsa</Typography>
                 {latestTipsStr(false) && (
                   <Chip
-                    sx={{ marginLeft: '3px' }}
+                    sx={{ marginLeft: '3px', color: openForTips ? "error" : "theme.palette.grey"}}
                     size={'small'}
-                    color={'error'}
-                    label={'senast ' + latestTipsStr()}
+                    label={`${openForTips ? 'senast ' + latestTipsStr() : "tidsfrist passerad"}`}
                   />
                 )}
               </AccordionSummary>
               <AccordionDetails>
                 <Typography textAlign={'left'}>
-                  Klicka på en typ av klapp du önskar dig för att tipsa din givare.
+                  {openForTips ? "Klicka på en typ av klapp du önskar dig för att tipsa din givare." : "Tidsfristen för att lämna eller byta tips är passerad."}
                 </Typography>
                 <Grid container justifyContent={'space-between'} columns={17}>
                   {giftTipsButton('hard')}
@@ -319,7 +321,7 @@ function Participant() {
                       fullWidth
                       variant="outlined"
                       onClick={() => setNewGiftTips(resetGift())}
-                      disabled={!giftChanged}
+                      disabled={!openForTips && !giftChanged}
                       color={'error'}
                       endIcon={<RestoreIcon />}
                     >
@@ -332,7 +334,7 @@ function Participant() {
                       variant="contained"
                       color={'primary'}
                       onClick={() => saveTips(newGiftTips)}
-                      disabled={!giftChanged}
+                      disabled={!openForTips && !giftChanged}
                       endIcon={<SaveIcon />}
                     >
                       Spara
@@ -416,7 +418,7 @@ function Participant() {
         />
         <AlertModal
           onClose={handleCloseNewsAlert}
-          open={newAlertOpen}
+          open={newAlertOpen && !!openForTips}
           title={'Nyheter är här!'}
           confirmLabel={'Ok'}
         >
