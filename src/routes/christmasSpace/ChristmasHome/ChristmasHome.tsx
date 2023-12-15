@@ -14,7 +14,9 @@ function ChristmasHome() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
   const [game, setGame] = useState<GameResponse>();
-  const [gameTitle, setGameTitle] = useState<string>();
+  const [gameTitle, setGameTitle] = useState<string>(
+    `Julklappsspelet ${new Date().getFullYear.toString()}`
+  );
   const { gameId } = useParams();
   const [alertOpen, setAlertOpen] = React.useState(false);
 
@@ -96,10 +98,7 @@ function ChristmasHome() {
 
         response.json().then((data) => {
           setGame(data as GameResponse);
-          const title = (data as GameResponse).title;
-          if (title) {
-            setGameTitle(title);
-          }
+          setGameTitle((data as GameResponse).title);
           resetGameForm(data);
           sessionStorage.setItem('adminKey', pass);
         });
@@ -132,6 +131,8 @@ function ChristmasHome() {
                 {...register('title')}
               />
               <TextField
+                multiline
+                rows={4}
                 sx={lightFieldStyle}
                 margin="normal"
                 label="Game Description"
@@ -170,7 +171,7 @@ function ChristmasHome() {
               </Button>
             </form>
             {game.participants.map((p, k) => (
-              <Box>
+              <Box key={p.id}>
                 <Button
                   sx={{ margin: '10px 0' }}
                   fullWidth

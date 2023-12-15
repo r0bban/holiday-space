@@ -134,7 +134,7 @@ function Participant() {
 
   useEffect(() => {
     if (game && game.me) setNewGiftTips(game.me.tips);
-    if (game) setOpenForTips(game.openForTips)
+    if (game) setOpenForTips(game.openForTips);
   }, [game]);
 
   const giftChanged = useMemo(() => {
@@ -299,15 +299,17 @@ function Participant() {
                 <Typography>Jag vill tipsa</Typography>
                 {latestTipsStr(false) && (
                   <Chip
-                    sx={{ marginLeft: '3px', color: openForTips ? "error" : "theme.palette.grey"}}
+                    sx={{ marginLeft: '3px', color: openForTips ? 'error' : 'theme.palette.grey' }}
                     size={'small'}
-                    label={`${openForTips ? 'senast ' + latestTipsStr() : "tidsfrist passerad"}`}
+                    label={`${openForTips ? 'senast ' + latestTipsStr() : 'tidsfrist passerad'}`}
                   />
                 )}
               </AccordionSummary>
               <AccordionDetails>
                 <Typography textAlign={'left'}>
-                  {openForTips ? "Klicka på en typ av klapp du önskar dig för att tipsa din givare." : "Tidsfristen för att lämna eller byta tips är passerad."}
+                  {openForTips
+                    ? 'Klicka på en typ av klapp du önskar dig för att tipsa din givare.'
+                    : 'Tidsfristen för att lämna eller byta tips är passerad.'}
                 </Typography>
                 <Grid container justifyContent={'space-between'} columns={17}>
                   {giftTipsButton('hard')}
