@@ -11,9 +11,20 @@ import { MobileDateTimePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 
 function ChristmasHome() {
+  const defaultValuesGame: GameResponse = {
+    declareForAll: false,
+    declareMyGiver: false,
+    id: '',
+    isOpen: false,
+    openForTips: false,
+    participants: [{} as ParticipantResponse],
+    title: ''
+  };
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>();
   const [game, setGame] = useState<GameResponse>();
+  const [updatedGame, setUpdatedGame] = useState<GameResponse>({ ...defaultValuesGame });
   const [gameTitle, setGameTitle] = useState<string>(
     `Julklappsspelet ${new Date().getFullYear.toString()}`
   );
@@ -98,6 +109,7 @@ function ChristmasHome() {
 
         response.json().then((data) => {
           setGame(data as GameResponse);
+          setUpdatedGame(data as GameResponse);
           setGameTitle((data as GameResponse).title);
           resetGameForm(data);
           sessionStorage.setItem('adminKey', pass);
@@ -110,6 +122,15 @@ function ChristmasHome() {
       }
     );
   }, []);
+
+  const handleFormOnChange =
+    (fieldName: string) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setUpdatedGame({
+        ...updatedGame,
+        [fieldName]: event.target.value
+      });
+    };
+
   return (
     <div className={styles.main}>
       <h1 className={styles.header}>This is home for game: {gameId}</h1>
@@ -132,13 +153,13 @@ function ChristmasHome() {
               />
               <TextField
                 multiline
-                rows={4}
                 sx={lightFieldStyle}
                 margin="normal"
                 label="Game Description"
                 variant="filled"
                 fullWidth
-                {...register('desc')}
+                onChange={handleFormOnChange('desc')}
+                defaultValue={updatedGame.desc}
               />
               <MobileDateTimePicker
                 sx={lightFieldStyle}
@@ -166,7 +187,12 @@ function ChristmasHome() {
                 label="Declare giver?"
                 {...register('declareMyGiver')}
               />
-              <Button type="submit" variant="outlined" fullWidth>
+              <Button
+                onClick={() => console.log(updatedGame.desc)}
+                type="submit"
+                variant="outlined"
+                fullWidth
+              >
                 Update
               </Button>
             </form>
