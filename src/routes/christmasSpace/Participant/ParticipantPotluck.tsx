@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { GameResponse } from '../../../api/types/games';
+import { GameResponse, ParticipantResponse } from '../../../api/types/games';
 import styles from './ParticipantPotluck.module.css';
 import AlertModal from '../../../components/AlertModal/AlertModal';
 import {
@@ -10,7 +10,19 @@ import {
   PotluckItemTemp,
   PotluckItemType
 } from '../../../api/types/potluck';
-import { List, ListItem, ListItemIcon, ListItemText, ListSubheader, Paper } from '@mui/material';
+import {
+  FormControl,
+  InputLabel,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
+  MenuItem,
+  Paper,
+  Select,
+  useTheme
+} from '@mui/material';
 import ColdIcon from '@mui/icons-material/AcUnit';
 import HotIcon from '@mui/icons-material/Whatshot';
 import AlcoholIcon from '@mui/icons-material/Liquor';
@@ -35,12 +47,39 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
   const { participantId } = useParams();
   const [potluck, setPotluck] = useState<PotluckItem[]>();
 
+  const showOption = {
+    showMine: 'SHOW_MINE',
+    showMenu: 'SHOW_MENU',
+    showByResponsible: 'SHOW_BY_RESPONSIBLE'
+  };
+
+  const getShowOptionLabel = (option: string) => {
+    switch (option) {
+      case showOption.showMine:
+        return 'Mina';
+      case showOption.showByResponsible:
+        return 'Per ansvarig';
+      case showOption.showMenu:
+        return 'Meny';
+    }
+  };
+
+  const [showOptionIs, setShowOptionIs] = useState<string>(showOption.showMenu);
+  const handleSelectOnChange = (option: string) => {
+    setShowOptionIs(option);
+    localStorage.setItem('showOption', option);
+  };
   const tempPotluck: PotluckItem[] = [
     {
       title: 'Gravad lax',
       responsible: ['Ewa-Lena', 'Anders'],
       temp: 'cold',
       type: 'food'
+    },
+    {
+      title: 'Rom',
+      responsible: ['Robert', 'Yuliet'],
+      type: 'alcohol'
     },
     {
       title: 'Varmrökt lax',
@@ -160,15 +199,12 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
       title: 'Julost',
       responsible: ['Daimara'],
       type: 'accessories'
-    },
-    {
-      title: 'Rom',
-      responsible: ['Robert', 'Yuliet'],
-      type: 'alcohol'
     }
   ];
 
   useEffect(() => {
+    const storedShowOption = localStorage.getItem('showOption');
+    if (storedShowOption) setShowOptionIs(storedShowOption);
     setPotluck(tempPotluck);
   }, []);
 
@@ -192,12 +228,21 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
     return true;
   };
 
-  const getPotluckItems = (include?: potluckFilter[], exclude?: potluckFilter[]): PotluckItem[] => {
+  const getPotluckItems = (
+    include?: potluckFilter[],
+    exclude?: potluckFilter[],
+    responsible?: string
+  ): PotluckItem[] => {
     if (!potluck) return [];
-    let result: PotluckItem[] = potluck;
+    let result: PotluckItem[] = [];
     if (include) {
       include.forEach((filter) => {
-        result = result.filter((item) => potluckItemMatchFilter(item, filter));
+        result.push(
+          ...potluck.filter(
+            (item) =>
+              potluckItemMatchFilter(item, filter) && !result.some((e) => e.title === item.title)
+          )
+        );
       });
     }
     if (exclude) {
@@ -205,12 +250,86 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
         result = result.filter((item) => !potluckItemMatchFilter(item, filter));
       });
     }
+    if (responsible) {
+      result = result.filter((item) => item.responsible.includes(responsible));
+    }
     return result;
   };
 
-  const makeListItem = (item: PotluckItem) => (
+  const groupBy = <K, V>(list: Array<V>, keyGetter: (input: V) => K): Map<K, Array<V>> => {
+    const map = new Map();
+    list.forEach((item) => {
+      const key = keyGetter(item);
+      const collection = map.get(key);
+      if (!collection) {
+        map.set(key, [item]);
+      } else {
+        collection.push(item);
+      }
+    });
+    return map;
+  };
+
+  const getPotluckItemsPerResponsible = () => {
+    if (potluck) {
+      return groupBy(potluck, (item) => item.responsible.toString());
+    }
+    return new Map<string, Array<PotluckItem>>();
+  };
+
+  const renderPotluckItemsGroupedByResponsible = () => {
+    const grouped = getPotluckItemsPerResponsible();
+    return Array.from(grouped.keys()).map((group) => {
+      const item = grouped.get(group);
+      if (item) {
+        item.sort((a, b) => a.title.localeCompare(b.title, 'sv'));
+        return (
+          <Paper sx={{ mb: '10px' }} key={group}>
+            <List>
+              <ListSubheader sx={{ fontSize: '20px' }}>{group}</ListSubheader>
+              {item.map((item) => makeListItem(item, true))}
+            </List>
+          </Paper>
+        );
+      }
+    });
+  };
+
+  const renderPotluckItemGroup = (
+    title: string,
+    icon?: React.ReactElement,
+    filter?: { include?: potluckFilter[]; exclude?: potluckFilter[] }
+  ) => {
+    const include = filter ? filter.include : undefined;
+    const exclude = filter ? filter.exclude : undefined;
+    const responsible = game.me && showOptionIs === showOption.showMine ? game.me.name : undefined;
+    const items = getPotluckItems(include, exclude, responsible);
+    if (items.length > 0) {
+      return (
+        <Paper sx={{ mb: '10px' }}>
+          <List>
+            <ListSubheader sx={{ fontSize: '20px' }}>
+              <>
+                {title}
+                {icon && icon}
+              </>
+            </ListSubheader>
+            {items
+              .sort((a, b) => a.title.localeCompare(b.title, 'sv'))
+              .map((item) => makeListItem(item, showOptionIs === showOption.showMine))}
+          </List>
+        </Paper>
+      );
+    }
+  };
+
+  const makeListItem = (item: PotluckItem, hideSecondaryLabel?: boolean) => (
     <ListItem key={item.title} disablePadding sx={{ pl: '20px' }}>
-      <ListItemText primary={item.title} secondary={item.responsible.toString()} key={item.title} />
+      <ListItemText
+        primary={item.title}
+        secondary={hideSecondaryLabel ? undefined : item.responsible.toString()}
+        key={item.title}
+      />
       {item.type && (item.type == 'beverage' || item.type == 'alcohol') && (
         <ListItemIcon>
           {item.type == 'beverage' ? <DrinkIcon sx={{ fontSize: 'medium' }} /> : <AlcoholIcon />}
@@ -218,53 +337,77 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
       )}
     </ListItem>
   );
+  const theme = useTheme();
+  const lightSelectStyle = {
+    '& .MuiInputBase-root': {
+      color: 'primary.contrastText',
+      '.MuiSvgIcon-root': {
+        color: 'primary.contrastText'
+      }
+    },
+    '.MuiFormLabel-root': {
+      color: 'primary',
+      '&.Mui-focused': {
+        color: 'primary.contrastText'
+      }
+    }
+  };
 
   return (
     <>
-      <Paper sx={{ mb: '10px' }}>
-        <List>
-          <ListSubheader sx={{ fontSize: '20px' }}>Tillbehör/Övrigt</ListSubheader>
-          {getPotluckItems([{ type: 'accessories' }], [{ order: 'dessert' }]).map((item) =>
-            makeListItem(item)
-          )}
-        </List>
+      <Paper
+        sx={{
+          mb: '10px',
+          border: `1px solid ${theme.palette.primary.main}`,
+          backgroundColor: 'transparent'
+        }}
+      >
+        <FormControl
+          variant="standard"
+          sx={{ m: 1, width: '80%', minWidth: 120, ...lightSelectStyle }}
+        >
+          <InputLabel sx={{ color: 'white' }} id="group-by-label">
+            Visa
+          </InputLabel>
+          <Select
+            value={showOptionIs}
+            onChange={(event) => handleSelectOnChange(event.target.value)}
+            label="Visa"
+          >
+            <MenuItem value={showOption.showMenu}>Meny</MenuItem>
+            <MenuItem value={showOption.showMine}>Mina</MenuItem>
+            <MenuItem value={showOption.showByResponsible}>Per ansvarig</MenuItem>
+          </Select>
+        </FormControl>
       </Paper>
 
-      <Paper sx={{ mb: '10px' }}>
-        <List>
-          <ListSubheader sx={{ fontSize: '20px' }}>
-            Kalla rätter <ColdIcon fontSize={'small'} />
-          </ListSubheader>
-          {getPotluckItems([{ temp: 'cold' }], [{ type: 'beverage' }, { type: 'accessories' }]).map(
-            (item) => makeListItem(item)
-          )}
-        </List>
-      </Paper>
-      <Paper sx={{ mb: '10px' }}>
-        <List>
-          <ListSubheader sx={{ fontSize: '20px' }}>
-            Varma rätter <HotIcon fontSize={'small'} />
-          </ListSubheader>
-          {getPotluckItems([{ temp: 'warm' }]).map((item) => makeListItem(item))}
-        </List>
-      </Paper>
-      <Paper sx={{ mb: '10px' }}>
-        <List>
-          <ListSubheader sx={{ fontSize: '20px' }}>
-            Efterätt
-            <DessertIcon sx={{ ml: '5px' }} fontSize={'small'} />
-          </ListSubheader>
-          {getPotluckItems([{ order: 'dessert' }]).map((item) => makeListItem(item))}
-        </List>
-      </Paper>
-      <Paper sx={{ mb: '10px' }}>
-        <List>
-          <ListSubheader sx={{ fontSize: '20px' }}>Dryck</ListSubheader>
-          {getPotluckItems([{ type: 'beverage' }]).map((item) => makeListItem(item))}
-          {getPotluckItems([{ type: 'alcohol' }]).map((item) => makeListItem(item))}
-        </List>
-      </Paper>
-
+      <>
+        {showOptionIs === showOption.showByResponsible ? (
+          <>{renderPotluckItemsGroupedByResponsible()}</>
+        ) : (
+          <>
+            {renderPotluckItemGroup('Tillbehör/Övrigt', undefined, {
+              include: [{ type: 'accessories' }],
+              exclude: [{ order: 'dessert' }]
+            })}
+            {renderPotluckItemGroup('Kalla rätter', <ColdIcon fontSize={'small'} />, {
+              include: [{ temp: 'cold' }],
+              exclude: [{ type: 'beverage' }, { type: 'accessories' }]
+            })}
+            {renderPotluckItemGroup('Varma rätter', <HotIcon fontSize={'small'} />, {
+              include: [{ temp: 'warm' }]
+            })}
+            {renderPotluckItemGroup(
+              'Efterätt',
+              <DessertIcon sx={{ ml: '5px' }} fontSize={'small'} />,
+              { include: [{ order: 'dessert' }] }
+            )}
+            {renderPotluckItemGroup('Dryck', undefined, {
+              include: [{ type: 'beverage' }, { type: 'alcohol' }]
+            })}
+          </>
+        )}
+      </>
       <AlertModal
         onClose={handleCloseIntro}
         open={introOpen}
