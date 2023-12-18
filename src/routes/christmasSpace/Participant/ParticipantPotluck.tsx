@@ -15,6 +15,7 @@ import ColdIcon from '@mui/icons-material/AcUnit';
 import HotIcon from '@mui/icons-material/Whatshot';
 import AlcoholIcon from '@mui/icons-material/Liquor';
 import DrinkIcon from '@mui/icons-material/LocalDrink';
+import DessertIcon from '@mui/icons-material/Cake';
 
 type ParticipantPotluckProps = {
   game: GameResponse;
@@ -126,6 +127,12 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
       type: 'food'
     },
     {
+      title: 'Ägghalvor',
+      responsible: ['Diana', 'Daniel'],
+      temp: 'cold',
+      type: 'food'
+    },
+    {
       title: 'Efterrätt',
       responsible: ['Diana', 'Daniel'],
       type: 'food',
@@ -202,7 +209,7 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
   };
 
   const makeListItem = (item: PotluckItem) => (
-    <ListItem key={item.title}>
+    <ListItem key={item.title} disablePadding sx={{ pl: '20px' }}>
       <ListItemText primary={item.title} secondary={item.responsible.toString()} key={item.title} />
       {item.type && (item.type == 'beverage' || item.type == 'alcohol') && (
         <ListItemIcon>
@@ -236,14 +243,17 @@ const ParticipantPotluck: FC<ParticipantPotluckProps> = ({
       <Paper sx={{ mb: '10px' }}>
         <List>
           <ListSubheader sx={{ fontSize: '20px' }}>
-            Varma rätter <HotIcon />
+            Varma rätter <HotIcon fontSize={'small'} />
           </ListSubheader>
           {getPotluckItems([{ temp: 'warm' }]).map((item) => makeListItem(item))}
         </List>
       </Paper>
       <Paper sx={{ mb: '10px' }}>
         <List>
-          <ListSubheader sx={{ fontSize: '20px' }}>Efterätt</ListSubheader>
+          <ListSubheader sx={{ fontSize: '20px' }}>
+            Efterätt
+            <DessertIcon sx={{ ml: '5px' }} fontSize={'small'} />
+          </ListSubheader>
           {getPotluckItems([{ order: 'dessert' }]).map((item) => makeListItem(item))}
         </List>
       </Paper>

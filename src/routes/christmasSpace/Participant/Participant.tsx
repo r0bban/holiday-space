@@ -45,7 +45,6 @@ const Participant = () => {
           return;
         }
         response.json().then((data) => {
-          console.log('.then()');
           if (!(data as GameResponse).me) {
             setError('Felaktig deltagarkod');
             return;
