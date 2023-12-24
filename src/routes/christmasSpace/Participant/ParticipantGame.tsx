@@ -325,9 +325,9 @@ const ParticipantGame: FC<ParticipantGameProps> = ({
         <div className={styles.releaseContainer}>
           <p className={styles.releaseIngress}>
             {showRecipient
-              ? 'Du ska  ge till'
+              ? `Du ${game.declareMyGiver ? 'har fått från' : 'ska  ge till'}`
               : game.isOpen
-              ? 'Klicka för att se mottgare'
+              ? `Klicka för att se ${game.declareMyGiver ? 'givare' : 'mottgare'}`
               : 'Vem du ska ge till lottas'}
           </p>
 
@@ -346,7 +346,9 @@ const ParticipantGame: FC<ParticipantGameProps> = ({
             </>
           )}
           {game.isOpen && game.me && showRecipient && (
-            <p className={styles.releaseDate}>{game.me.givingTo}</p>
+            <p className={styles.releaseDate}>
+              {game.declareMyGiver ? game.me.receivingFrom : game.me.givingTo}
+            </p>
           )}
         </div>
       )}
@@ -355,7 +357,9 @@ const ParticipantGame: FC<ParticipantGameProps> = ({
         onClick={() => setShowRecipient(!showRecipient)}
         disabled={!game.isOpen}
       >
-        {showRecipient ? 'Dölj mottagare' : 'Visa mottagare'}
+        {showRecipient
+          ? `Dölj ${game.declareMyGiver ? 'givare' : 'mottagare'}`
+          : `Visa ${game.declareMyGiver ? 'givare' : 'mottagare'}`}
       </Button>
       <AlertModal
         onClose={handleCloseIntro}
