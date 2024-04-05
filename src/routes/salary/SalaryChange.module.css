@@ -1,0 +1,42 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-items: center;
+  align-items: center;
+  width: 100%;
+  background-color: #282c34;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  max-width: 300px;
+}
+
+.navBtnGrp {
+  margin-bottom: 16px;
+}
+
+.navBtn img {
+  margin-right: 6px;
+}
+
+h1,
+h3,
+p,
+span.dataText {
+  margin: 0;
+  color: azure;
+}
+
+.header {
+  font-size: 20px;
+  margin: 16px 0;
+}
+
+.desc p {
+  color: #282c34;
+}

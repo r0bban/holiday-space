@@ -4,8 +4,9 @@ import { Route, Routes } from 'react-router-dom';
 import ChristmasHome from './routes/christmasSpace/ChristmasHome';
 import Participant from './routes/christmasSpace/Participant';
 import NetSalary from './routes/salary';
-
+import SalaryChange from './routes/salary/SalaryChange';
 import Home from './routes/Home';
+
 import './App.css';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -21,7 +22,8 @@ function App() {
             <Route path=":gameId" element={<ChristmasHome />} />
             <Route path=":gameId/:participantId" element={<Participant />} />
           </Route>
-          <Route path="salary/" element={<NetSalary />} />
+          <Route path="salary" element={<NetSalary />}></Route>
+          <Route path="salary/change" element={<SalaryChange />} />
         </Routes>
       </div>
     </LocalizationProvider>
