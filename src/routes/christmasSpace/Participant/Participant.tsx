@@ -104,6 +104,7 @@ const Participant = () => {
                     className={styles.navBtn}
                     variant={view == views.potluck ? 'contained' : 'outlined'}
                     onClick={handleClickFood}
+                    disabled
                   >
                     <img src={ham} height="18px" />
                     Knytkalas
