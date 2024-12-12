@@ -44,7 +44,7 @@ function ChristmasHome() {
       try {
         await navigator
           .share({
-            title: 'Julklappsspelet 2023',
+            title: 'Julklappsspelet 2024',
             url: `https://r0bban.github.io/holiday-space/christmas/game/${gameId}/${participant.id}`,
             text: `Hej ${participant.name}, hjärtligt välkommen till julklappsspelet: ${gameTitle}`
           })

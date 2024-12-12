@@ -27,7 +27,7 @@ const Participant = () => {
     potluck: 'POTLUCK'
   };
 
-  const [view, setView] = useState<view>(views.potluck);
+  const [view, setView] = useState<view>(views.game);
 
   useEffect(() => {
     fetch(`https://christmas-space-s7sdcyjejq-lz.a.run.app/games/${gameId}/${participantId}`).then(

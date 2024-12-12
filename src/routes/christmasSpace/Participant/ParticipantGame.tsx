@@ -364,7 +364,7 @@ const ParticipantGame: FC<ParticipantGameProps> = ({
       <AlertModal
         onClose={handleCloseIntro}
         open={introOpen && !!openForTips}
-        title={'Nyheter är här!'}
+        title={game.title}
         confirmLabel={'Ok'}
       >
         {game && game.lastRecipientTips && (
